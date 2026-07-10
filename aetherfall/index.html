@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#07121f" />
+<title>AETHERFALL — Open World</title>
+<link rel="stylesheet" href="style-1.css" />
+<link rel="stylesheet" href="style-2.css" />
+
+</head>
+<body>
+<div id="game"></div><div id="vignette"></div><div id="scanlines"></div><div id="damage"></div>
+<div id="hud">
+  <div id="status" class="panel">
+    <div class="brand"><b>AETHERFALL</b><span>RANGER // 07</span></div>
+    <div class="row"><span>HULL</span><div class="bar"><div id="healthFill" class="fill health"></div></div><strong id="healthText">100</strong></div>
+    <div class="row"><span>CORE</span><div class="bar"><div id="energyFill" class="fill energy"></div></div><strong id="energyText">100</strong></div>
+    <div class="row"><span>RANK</span><div class="bar"><div id="xpFill" class="fill xp"></div></div><strong id="levelText">01</strong></div>
+  </div>
+  <div id="mission" class="panel"><div class="eyebrow">ACTIVE CONTRACT</div><div id="missionTitle" class="mission-title">Calibrating nav core…</div><div id="missionDetail" class="mission-detail">Survey the frontier.</div></div>
+  <div id="topRight"><div id="meters" class="panel"><div class="metric">VELOCITY<b id="speed">000</b></div><div class="metric">CREDITS<b id="credits">0000</b></div></div><div id="miniWrap" class="panel"><canvas id="minimap" width="228" height="228"></canvas><div class="miniRing"></div></div></div>
+  <div id="compass" class="panel"><div class="compass-center"></div><span id="compassText">N&nbsp;&nbsp;&nbsp; 000° &nbsp;&nbsp;&nbsp;N</span></div>
+  <div id="crosshair"><div class="crosscut"></div></div><div id="objectiveArrow">◆</div>
+  <div id="toast" class="panel"></div><div id="interactHint" class="panel">PULSE TO INTERACT</div>
+</div>
+<div id="controls"><div id="stickBase"><div id="stickKnob"></div></div><div id="actions"><button id="pulse" class="action">PULSE</button><button id="boost" class="action">BOOST</button><button id="fire" class="action">FIRE</button></div></div>
+<button id="pauseBtn">Ⅱ</button>
+<div id="start" class="overlay"><div class="card"><div class="logoSmall">AN OPEN-WORLD FRONTIER</div><div class="title">AETHER<br>FALL</div><div class="subtitle">THE SHATTERED SEA</div><div class="intro">Your sky-rider has crashed beyond the civilized rim. Cross a vast archipelago, recover lost Aether shards, awaken ancient storm beacons, fight rogue machines, and challenge the Warden above the world.</div><div class="featureGrid"><div class="feature"><b>EXPLORE</b>Land, sea, ruins, cities and hidden islands.</div><div class="feature"><b>FIGHT</b>Blasters, pulse attacks, drones and a boss.</div><div class="feature"><b>GROW</b>Ranks, upgrades, credits and saved progress.</div></div><button id="startBtn" class="primary">ENTER THE FRONTIER</button><button id="resetBtn" class="secondary">RESET SAVE</button><div class="tiny">LEFT STICK: MOVE · DRAG RIGHT SIDE: LOOK · FIRE: BLASTER · BOOST: OVERDRIVE · PULSE: INTERACT / EMP</div></div></div>
+<div id="pause" class="overlay hidden"><div class="card"><div class="logoSmall">FIELD MENU</div><div class="title" style="font-size:52px">PAUSED</div><div class="intro">Progress is stored automatically on this device.</div><div style="margin-top:22px"><button id="resumeBtn" class="primary">RETURN TO WORLD</button><button id="qualityBtn" class="secondary">QUALITY: AUTO</button></div></div></div>
+<div id="gameover" class="overlay hidden"><div class="card"><div class="logoSmall">RANGER SIGNAL LOST</div><div class="title" style="font-size:52px">SYSTEM<br>FAILURE</div><div class="intro">Your sky-rider was recovered by frontier salvagers. Credits are intact, but the machine needs another launch.</div><div style="margin-top:22px"><button id="retryBtn" class="primary">REDEPLOY</button></div></div></div>
+<div id="rotate"><div><div class="phone"></div><b>ROTATE TO LANDSCAPE</b><p style="color:#83a4b2;font-size:13px">Aetherfall works best with the iPhone sideways.</p></div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js';
+try {
+  const files = ['game-1.txt','game-2.txt','game-3.txt','game-4.txt','game-5.txt','game-6.txt'];
+  const parts = await Promise.all(files.map(async f => { const r = await fetch(f); if(!r.ok) throw new Error(`Failed to load ${f}`); return r.text(); }));
+  new Function('THREE', parts.join('\n'))(THREE);
+} catch (error) {
+  console.error(error);
+  document.querySelector('.intro').textContent = 'The game could not finish loading. Check your connection and refresh the page.';
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('startBtn').textContent = 'LOAD ERROR';
+}
+</script>
+
+</body>
+</html>
