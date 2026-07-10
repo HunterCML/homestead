@@ -1,0 +1,16 @@
+function loop(now){requestAnimationFrame(loop);const rawDt=Math.min(.05,(now-last)/1000);last=now;if(!started||paused){renderer.render(scene,camera);return}const time=now/1000;updateWorld(rawDt,time);updatePlayer(rawDt,time);updateCollectibles(rawDt,time);updateDrones(rawDt,time);updateShots(rawDt);hudTimer+=rawDt;if(hudTimer>.08){hudTimer=0;updateHUD()}renderer.render(scene,camera)}requestAnimationFrame(loop);
+
+// ---------- Menus, upgrades and launch ----------
+function togglePause(force){if(!started)return;paused=force!==undefined?force:!paused;$('pause').classList.toggle('hidden',!paused);if(audio)audio.resume();}
+$('pauseBtn').addEventListener('click',()=>togglePause());$('resumeBtn').addEventListener('click',()=>togglePause(false));
+$('qualityBtn').addEventListener('click',()=>{save.quality=save.quality==='high'?'low':save.quality==='low'?'auto':'high';applyQuality();persist()});
+function applyQuality(){let ratio;if(save.quality==='high')ratio=Math.min(devicePixelRatio,1.8);else if(save.quality==='low')ratio=1;else ratio=Math.min(devicePixelRatio,isMobile?1.25:1.6);renderer.setPixelRatio(ratio);renderer.setSize(innerWidth,innerHeight);$('qualityBtn').textContent=`QUALITY: ${save.quality.toUpperCase()}`}
+$('startBtn').addEventListener('click',async()=>{startAudio();audio?.resume();started=true;paused=false;$('start').classList.add('hidden');try{await document.documentElement.requestFullscreen?.();await screen.orientation?.lock?.('landscape')}catch{}toast('SKY-RIDER ONLINE — FIND THE AETHER SHARDS',2600)});
+$('resetBtn').addEventListener('click',()=>{if(confirm('Erase all Aetherfall progress on this device?')){localStorage.removeItem(SAVE_KEY);location.reload()}});
+$('retryBtn').addEventListener('click',()=>{health=maxHealth();energy=maxEnergy();alive=true;paused=false;velocity.set(0,0,0);player.position.set(0,terrainHeight(0,0)+5,45);$('gameover').classList.add('hidden');toast('REDEPLOYED AT RANGER REACH')});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&started&&!paused)togglePause(true)});
+applyQuality();updateHUD();camera.position.set(-18,16,45);camera.lookAt(player.position);
+
+// Periodic reinforcement keeps the world alive.
+setInterval(()=>{if(!started||paused||drones.filter(d=>!d.dead&&!d.boss).length>14)return;const isl=islands[1+Math.floor(Math.random()*(islands.length-1))],a=Math.random()*TAU,r=70+Math.random()*isl.r*.5;spawnDrone(isl.x+Math.cos(a)*r,isl.z+Math.sin(a)*r);toast('ROGUE SIGNAL ENTERED THE FRONTIER')},18000);
